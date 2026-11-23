@@ -1,0 +1,53 @@
+{
+  "StandorteDialog.tsx": {
+    "bezeichnung": "z. B. Hauptstandort Berlin"
+  },
+  "PersonenDialog.tsx": {
+    "vorname": "z. B. Anna",
+    "nachname": "z. B. Müller",
+    "email": "z. B. anna.mueller@firma.de",
+    "abteilung": "z. B. Personalentwicklung",
+    "standort": "Welcher Standort?"
+  },
+  "FortbildungsantraegeDialog.tsx": {
+    "antragsteller": "Wer beantragt?",
+    "titel": "z. B. Erste Hilfe für Teams",
+    "veranstalter": "z. B. Bildungswerk Nord",
+    "ort": "z. B. Hamburg oder online",
+    "zielgruppe": "z. B. Fachkräfte",
+    "beginn": "Wann beginnt die Fortbildung?",
+    "ende": "Wann endet sie?",
+    "arbeitsbefreiung_tage": "z. B. 2",
+    "arbeitsbefreiung_stunden": "z. B. 16",
+    "kosten_unterkunft_verpflegung": "z. B. 180",
+    "kursgebuehren": "z. B. 450",
+    "fahrtkosten": "z. B. 60",
+    "gesamtkosten": "z. B. 690",
+    "ausschreibung_link": "z. B. https://beispiel.de",
+    "leitungskraft": "Welche Leitungskraft?",
+    "weitere_leitungskraefte": "Welche weiteren Personen?",
+    "status": "Wie ist der Stand?",
+    "fortbildungstage": "z. B. 2",
+    "fortbildungsstunden": "z. B. 16",
+    "dienstbefreiung_tage": "z. B. 2",
+    "dienstbefreiung_stunden": "z. B. 16",
+    "kostenuebernahme": "z. B. 500",
+    "eigenanteil": "z. B. 190",
+    "restanspruch_tage": "z. B. 3",
+    "beginn_zeitraum": "Wann startet der Zeitraum?",
+    "bemerkung": "Anmerkungen zum Antrag",
+    "genehmigt_am": "Wann wurde genehmigt?",
+    "tatsaechliche_kosten": "z. B. 700",
+    "abrechnung_datum": "Wann wurde abgerechnet?",
+    "abrechnung_bemerkung": "Anmerkungen zur Abrechnung",
+    "zahlungsbetrag": "z. B. 190",
+    "zahlungseingang_datum": "Wann kam die Zahlung?",
+    "abschluss_datum": "Wann abgeschlossen?"
+  },
+  "RueckmeldungenDerLeitungskraefteDialog.tsx": {
+    "antrag": "Welcher Antrag?",
+    "leitungskraft": "Welche Leitungskraft?",
+    "kommentar": "Anmerkung oder Frage",
+    "datum": "Wann erfolgte die Rückmeldung?"
+  }
+}

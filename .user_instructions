@@ -1,0 +1,40 @@
+Ich brauche eine Applikation für die Beantragung und Abrechnung von Fortbildungen für Mitarbeitende. 
+
+
+Hier der bisherige Prozess. Falls dir Verbesserungen einfallen nutze diese gerne:
+1) Mitarbeiter beantragt Fortbildung mit Vorlage und muss zwingend einen Ausschreibung, Link, oder ähnliches beifügen. Folgende Informationen muss der Antrag enthalten: Name der/des Mitarbeitenden, Titel der Veranstaltung, Veranstalter, Ort der Veranstaltung (bzw. digitales Format), Zielgruppe, Zeitraum (von./bis mit Uhrzeit oder gnazen Tagen), Arbeitsbefreiung (Anzahl Tage oder Stunden), Kosten Unterkunft & Verpflegung, Kursgebühren, Fahrtkosten, Gesamtkosten, Anhang (Kursausschreibung bzw. Tagungsprogram). 
+
+Zusätzlich muss die zuständige Leitungskraft ausgewählt werden.
+
+2) Zuständige Leitungskraft sichtet Antrag und füllt als Vorschlage die "Stellungsnahme des Vorgesetzten" aus.
+
+Stellungsnahme des Vorgesetzten:
+-Genehmigung ja/nein
+-Fortbildung Kategorie (1, 2, 3) oder Fachtag
+-Fortbildungstage (Anzahl Tage oder Stunden)
+-Dienstbefreiung (Anzahl Tage oder Stunden)
+-Kostenübernahme in Höhe von (Summe)
+-Eigenanteil (Summe)
+-Restanspruch Fortbildungstage (2 Jahre) (Zahl)
+-Beginn 2-Jahres-Zeitraum (Datum)
+-Bemerkung (Freitext)
+
+3) Ausgefüllter Antrag wird an mindestens 3 weitere Leitungskräfte geschickt , die zustimmen können oder nachfragen stellen bzw. Kommentare machen können. (Entweder in der Applikation oder Erstellung einer PDF für Versand und Nachtrag der Kommentare)
+
+4) Gegebenenfalls Anpassung des Anntrags nach Kommentar
+
+5) Genehmigung des Antrags, Übergabe an Sachbearbeitung für Fortbildungsanträge. Meldung an Antragstellenden Mitarbeitenden. Dabei auch Mitteilung der verbleibenden Fortbildungstage.
+
+6) Mitarbeitende macht Fortbildung, und rechnete anschließend Fortbildung mit Formular ab. 
+
+7) Sachbearbeitung forder Eigenanteil bei Mitarbeiter an, oder überweißt ausstehenden Beatrag an Mitarbeiter. Bei Zahlungseingang wird dieser im Dokument ausgewiesen.
+
+8) Nach Abschluss des Vorgangs schließen des Formulars
+
+
+
+Zusätzlich soll es im Dashboard Auskunft über den Verbrauch & Stand der Fortbildungstage nach Jahr geben, die Gesamtkosten der Fortbildungen, und eine Liste mit Titel der Fortbildungen.
+
+Das Modul Personen würde ich komplett überarbeiten. Hierbei gibt es nur Personen die entweder Leitungskraft oder Sachbearbeiter sind.
+
+Bei Personen soll noch der Standort auswählbar sein. Hier ein Dropdown was zukünftig mit Orten befüllt wird.

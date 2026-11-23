@@ -1,0 +1,40 @@
+{
+  "entities": {
+    "Standorte": {
+      "placeholders_set": 1,
+      "defaults_keys": [],
+      "computed_keys": [],
+      "reason": "Standorte sind reine Stammdaten mit nur einem Textfeld, daher gibt es keine Formeln, Standardwerte oder Zahlenregeln."
+    },
+    "Personen": {
+      "placeholders_set": 5,
+      "defaults_keys": [],
+      "computed_keys": [],
+      "reason": "Reine Stammdaten ohne numerische Felder, daher keine Formeln und keine sinnvollen Standardwerte."
+    },
+    "Fortbildungsanträge": {
+      "placeholders_set": 33,
+      "defaults_keys": [
+        "beginn",
+        "ende",
+        "status"
+      ],
+      "computed_keys": [
+        "gesamtkosten",
+        "fortbildungstage",
+        "fortbildungsstunden",
+        "_fortbildung_dauer_tage",
+        "eigenanteil"
+      ],
+      "reason": "Gesamtkosten sum the three cost fields, duration comes from beginn/ende, and Eigenanteil is total minus Kostenübernahme."
+    },
+    "Rückmeldungen der Leitungskräfte": {
+      "placeholders_set": 4,
+      "defaults_keys": [
+        "datum"
+      ],
+      "computed_keys": [],
+      "reason": "Keine Formeln, da das Formular nur eine Rückmeldung mit Text und Datum erfasst und keine Mengen oder Beträge berechnet werden."
+    }
+  }
+}

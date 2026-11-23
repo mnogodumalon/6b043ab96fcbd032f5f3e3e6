@@ -1,0 +1,301 @@
+{
+  "version": 1,
+  "language": "de",
+  "understanding": {
+    "summary": "Die Anwendung begleitet Fortbildungen von der Beantragung bis zum Abschluss. Mitarbeitende stellen einen Antrag mit allen Angaben, Kosten und Ausschreibung (Datei oder Link). Die zuständige Leitungskraft füllt die Stellungnahme aus, mindestens drei weitere Leitungskräfte stimmen zu, fragen nach oder kommentieren. Nach Genehmigung informiert die Sachbearbeitung den Antragsteller samt Restanspruch, rechnet nach der Fortbildung ab, fordert den Eigenanteil an oder überweist den Restbetrag und schließt den Vorgang ab. Das Dashboard zeigt Verbrauch und Stand der Fortbildungstage nach Jahr, die Gesamtkosten und eine Liste der Fortbildungstitel. Personen sind nur Leitungskräfte oder Sachbearbeitung, mit Standort als Auswahl.",
+    "outside_users": [],
+    "roles": [
+      "Leitungskraft",
+      "Sachbearbeitung Fortbildung",
+      "Mitarbeitende"
+    ],
+    "main_tasks": [
+      "Fortbildung beantragen",
+      "Stellungnahme der zuständigen Leitungskraft erfassen",
+      "Rückmeldungen weiterer Leitungskräfte einholen",
+      "Antrag genehmigen und Antragsteller informieren",
+      "Fortbildung abrechnen",
+      "Zahlung nachverfolgen und Vorgang abschließen"
+    ],
+    "platform_roles": [
+      {
+        "persona": "Sachbearbeitung Fortbildung",
+        "role": "datenverarbeitung",
+        "apps": [
+          "fortbildungsantraege",
+          "personen",
+          "standorte",
+          "rueckmeldungen_der_leitungskraefte"
+        ]
+      },
+      {
+        "persona": "Leitungskraft",
+        "role": "standard",
+        "apps": [
+          "fortbildungsantraege",
+          "rueckmeldungen_der_leitungskraefte",
+          "personen"
+        ]
+      },
+      {
+        "persona": "Mitarbeitende",
+        "role": "standard",
+        "apps": [
+          "fortbildungsantraege",
+          "personen",
+          "rueckmeldungen_der_leitungskraefte"
+        ]
+      }
+    ],
+    "wish_kind": "plain",
+    "wish_signals": []
+  },
+  "flows": [
+    {
+      "slug": "fortbildung-beantragen",
+      "label": {
+        "de": "Fortbildung beantragen",
+        "en": "Apply for training"
+      },
+      "description": "Mitarbeitende stellen einen Fortbildungsantrag mit allen Angaben, Kosten, Ausschreibung (Datei oder Link) und zuständiger Leitungskraft.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "fortbildungsantraege",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "antragsteller": "picked",
+            "titel": "user",
+            "veranstalter": "user",
+            "ort": "user",
+            "zielgruppe": "user",
+            "beginn": "user",
+            "ende": "user",
+            "arbeitsbefreiung_tage": "user",
+            "arbeitsbefreiung_stunden": "user",
+            "kosten_unterkunft_verpflegung": "user",
+            "kursgebuehren": "user",
+            "fahrtkosten": "user",
+            "gesamtkosten": "user",
+            "ausschreibung": "user",
+            "ausschreibung_link": "user",
+            "leitungskraft": "picked",
+            "status": "fixed:antrag_gestellt",
+            "tatsaechliche_kosten": "user",
+            "kostenuebernahme": "user"
+          },
+          "multiple": false,
+          "needs": {},
+          "defaults": []
+        }
+      ],
+      "required": [
+        "fortbildungsantraege.kostenuebernahme",
+        "fortbildungsantraege.tatsaechliche_kosten"
+      ],
+      "brief": "# Flow `fortbildung-beantragen` — Fortbildung beantragen\nMitarbeitende stellen einen Fortbildungsantrag mit allen Angaben, Kosten, Ausschreibung (Datei oder Link) und zuständiger Leitungskraft.\n\n## Your hook — import it, never rebuild what it owns\n`import { useFortbildungBeantragenFlow } from '@/lib/journey/flows/FortbildungBeantragen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: antragsteller, leitungskraft), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Antragsteller/in aus den Personen wählen\n2. Titel, Veranstalter, Ort und Zielgruppe erfassen\n3. Beginn und Ende mit Uhrzeit erfassen\n4. Arbeitsbefreiung in Tagen oder Stunden erfassen\n5. Kosten für Unterkunft, Kursgebühren, Fahrtkosten und Gesamtkosten erfassen\n6. Ausschreibung als Datei oder Link beifügen\n7. Zuständige Leitungskraft auswählen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `fortbildungsantraege`:\n    - `antragsteller`: from the record the user picks in this flow\n    - `titel`: the user enters it (bind it through the layer: form.field/…)\n    - `veranstalter`: the user enters it (bind it through the layer: form.field/…)\n    - `ort`: the user enters it (bind it through the layer: form.field/…)\n    - `zielgruppe`: the user enters it (bind it through the layer: form.field/…)\n    - `beginn`: the user enters it (bind it through the layer: form.field/…)\n    - `ende`: the user enters it (bind it through the layer: form.field/…)\n    - `arbeitsbefreiung_tage`: the user enters it (bind it through the layer: form.field/…)\n    - `arbeitsbefreiung_stunden`: the user enters it (bind it through the layer: form.field/…)\n    - `kosten_unterkunft_verpflegung`: the user enters it (bind it through the layer: form.field/…)\n    - `kursgebuehren`: the user enters it (bind it through the layer: form.field/…)\n    - `fahrtkosten`: the user enters it (bind it through the layer: form.field/…)\n    - `gesamtkosten`: the user enters it (bind it through the layer: form.field/…)\n    - `ausschreibung`: the user enters it (bind it through the layer: form.field/…)\n    - `ausschreibung_link`: the user enters it (bind it through the layer: form.field/…)\n    - `leitungskraft`: from the record the user picks in this flow\n    - `status`: fixed value `antrag_gestellt` — set it in the plan step's values, never ask\n    - `tatsaechliche_kosten`: the user enters it (bind it through the layer: form.field/…) — **REQUIRED in this flow** (mark it required and validate it before the step advances, whatever the app's base view says): tool `zahlungsbetrag-berechnen` → `zahlungsbetrag` cannot be built without it\n    - `kostenuebernahme`: the user enters it (bind it through the layer: form.field/…) — **REQUIRED in this flow** (mark it required and validate it before the step advances, whatever the app's base view says): tool `zahlungsbetrag-berechnen` → `zahlungsbetrag` cannot be built without it\n\n## Reads\n- `personen` columns vorname, nachname, rolle, standort\n- `personen` columns vorname, nachname, abteilung\n\n## Checks BEFORE the write (block the submit with the message when they fail)\n- custom (any_of=`fortbildungsantraege.ausschreibung,fortbildungsantraege.ausschreibung_link`) — message: „Bitte eine Ausschreibung als Datei oder Link beifügen.“\n\n## Success page\n- shows: `fortbildungsantraege.titel`, `fortbildungsantraege.status`\n- next flows to offer: `stellungnahme-erfassen`\n\n## Never write these — another flow or a tool owns them\n- `fortbildungsantraege.genehmigung_vorschlag` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.kategorie` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungstage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungsstunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_stunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.eigenanteil` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.restanspruch_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.beginn_zeitraum` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.bemerkung` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.weitere_leitungskraefte` (owner: intent `stellungnahme-erfassen`)\n- `rueckmeldungen_der_leitungskraefte.antrag` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.leitungskraft` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.entscheidung` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.kommentar` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.datum` (owner: intent `rueckmeldung-geben`)\n- `fortbildungsantraege.genehmigt_am` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.mitteilung_antragsteller` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.zahlungsbetrag` (owner: tool `zahlungsbetrag-berechnen`)\n- `fortbildungsantraege.abschluss_datum` (owner: tool `vorgang-abschliessen`)\n- `fortbildungsantraege.zahlungseingang_datum` (owner: tool `zahlungseingang-datum-setzen`)\n"
+    },
+    {
+      "slug": "stellungnahme-erfassen",
+      "label": {
+        "de": "Stellungnahme erfassen",
+        "en": "Record supervisor opinion"
+      },
+      "description": "Die zuständige Leitungskraft sichtet den Antrag und füllt die Stellungnahme als Vorschlag aus; weitere Leitungskräfte werden gewählt.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "fortbildungsantraege",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "genehmigung_vorschlag": "user",
+            "kategorie": "user",
+            "fortbildungstage": "user",
+            "fortbildungsstunden": "user",
+            "dienstbefreiung_tage": "user",
+            "dienstbefreiung_stunden": "user",
+            "kostenuebernahme": "user",
+            "eigenanteil": "user",
+            "restanspruch_tage": "user",
+            "beginn_zeitraum": "user",
+            "bemerkung": "user",
+            "weitere_leitungskraefte": "picked"
+          },
+          "multiple": false,
+          "needs": {},
+          "defaults": []
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `stellungnahme-erfassen` — Stellungnahme erfassen\nDie zuständige Leitungskraft sichtet den Antrag und füllt die Stellungnahme als Vorschlag aus; weitere Leitungskräfte werden gewählt.\n\n## Your hook — import it, never rebuild what it owns\n`import { useStellungnahmeErfassenFlow } from '@/lib/journey/flows/StellungnahmeErfassen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: weitere_leitungskraefte), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `fortbildungsantraege`: `{...flow.picks.fortbildungsantraege.select} {...flow.pick('fortbildungsantraege')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Offenen Antrag wählen\n2. Genehmigung ja/nein und Kategorie angeben\n3. Fortbildungs- und Dienstbefreiungstage oder -stunden erfassen\n4. Kostenübernahme und Eigenanteil erfassen\n5. Restanspruch und Beginn des 2-Jahres-Zeitraums erfassen\n6. Bemerkung erfassen\n7. Mindestens drei weitere Leitungskräfte wählen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- updates `fortbildungsantraege`:\n    - `genehmigung_vorschlag`: the user enters it (bind it through the layer: form.field/…)\n    - `kategorie`: the user enters it (bind it through the layer: form.field/…)\n    - `fortbildungstage`: the user enters it (bind it through the layer: form.field/…)\n    - `fortbildungsstunden`: the user enters it (bind it through the layer: form.field/…)\n    - `dienstbefreiung_tage`: the user enters it (bind it through the layer: form.field/…)\n    - `dienstbefreiung_stunden`: the user enters it (bind it through the layer: form.field/…)\n    - `kostenuebernahme`: the user enters it (bind it through the layer: form.field/…) — **REQUIRED in this flow** (mark it required and validate it before the step advances, whatever the app's base view says): tool `zahlungsbetrag-berechnen` → `zahlungsbetrag` cannot be built without it\n    - `eigenanteil`: the user enters it (bind it through the layer: form.field/…)\n    - `restanspruch_tage`: the user enters it (bind it through the layer: form.field/…)\n    - `beginn_zeitraum`: the user enters it (bind it through the layer: form.field/…)\n    - `bemerkung`: the user enters it (bind it through the layer: form.field/…)\n    - `weitere_leitungskraefte`: from the record the user picks in this flow\n\n## Reads\n- `fortbildungsantraege` columns titel, antragsteller, beginn, gesamtkosten, status\n- `personen` columns vorname, nachname, abteilung\n\n## Checks BEFORE the write (block the submit with the message when they fail)\n- custom (min_count=`fortbildungsantraege.weitere_leitungskraefte:3`) — message: „Bitte mindestens drei weitere Leitungskräfte auswählen.“\n\n## Success page\n- the success page offers the way back — `undo={flow.undo}` on <SuccessStep>: „Stellungnahme zurücknehmen“ sets status=stellungnahme\n- shows: `fortbildungsantraege.titel`, `fortbildungsantraege.status`\n- next flows to offer: `rueckmeldung-geben`\n\n## Never write these — another flow or a tool owns them\n- `fortbildungsantraege.antragsteller` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.titel` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.veranstalter` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ort` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.zielgruppe` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.beginn` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ende` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_tage` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_stunden` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kosten_unterkunft_verpflegung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kursgebuehren` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.fahrtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.gesamtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung_link` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.leitungskraft` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.status` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.tatsaechliche_kosten` (owner: intent `fortbildung-beantragen`)\n- `rueckmeldungen_der_leitungskraefte.antrag` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.leitungskraft` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.entscheidung` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.kommentar` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.datum` (owner: intent `rueckmeldung-geben`)\n- `fortbildungsantraege.genehmigt_am` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.mitteilung_antragsteller` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.zahlungsbetrag` (owner: tool `zahlungsbetrag-berechnen`)\n- `fortbildungsantraege.abschluss_datum` (owner: tool `vorgang-abschliessen`)\n- `fortbildungsantraege.zahlungseingang_datum` (owner: tool `zahlungseingang-datum-setzen`)\n"
+    },
+    {
+      "slug": "rueckmeldung-geben",
+      "label": {
+        "de": "Rückmeldung geben",
+        "en": "Give feedback"
+      },
+      "description": "Eine weitere Leitungskraft stimmt einem Antrag in Abstimmung zu, stellt eine Rückfrage oder kommentiert.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "rueckmeldungen_der_leitungskraefte",
+          "op": "create",
+          "when": "always",
+          "fields": {
+            "antrag": "picked",
+            "leitungskraft": "picked",
+            "entscheidung": "user",
+            "kommentar": "user",
+            "datum": "derived:today"
+          },
+          "multiple": false,
+          "needs": {},
+          "defaults": []
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `rueckmeldung-geben` — Rückmeldung geben\nEine weitere Leitungskraft stimmt einem Antrag in Abstimmung zu, stellt eine Rückfrage oder kommentiert.\n\n## Your hook — import it, never rebuild what it owns\n`import { useRueckmeldungGebenFlow } from '@/lib/journey/flows/RueckmeldungGeben';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick: antrag, leitungskraft), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Antrag in Abstimmung wählen\n2. Leitungskraft wählen\n3. Zustimmung, Rückfrage oder Kommentar wählen\n4. Kommentar oder Rückfrage eintragen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- creates `rueckmeldungen_der_leitungskraefte`:\n    - `antrag`: from the record the user picks in this flow\n    - `leitungskraft`: from the record the user picks in this flow\n    - `entscheidung`: the user enters it (bind it through the layer: form.field/…)\n    - `kommentar`: the user enters it (bind it through the layer: form.field/…)\n    - `datum`: derived: today() — set it in the plan step, never ask\n\n## Reads\n- `fortbildungsantraege` columns titel, antragsteller, leitungskraft, weitere_leitungskraefte, status\n- `personen` columns vorname, nachname\n\n## Success page\n- shows: `rueckmeldungen_der_leitungskraefte.entscheidung`\n- next flows to offer: `antrag-genehmigen`\n\n## Never write these — another flow or a tool owns them\n- `fortbildungsantraege.antragsteller` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.titel` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.veranstalter` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ort` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.zielgruppe` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.beginn` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ende` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_tage` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_stunden` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kosten_unterkunft_verpflegung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kursgebuehren` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.fahrtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.gesamtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung_link` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.leitungskraft` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.status` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.tatsaechliche_kosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kostenuebernahme` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.genehmigung_vorschlag` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.kategorie` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungstage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungsstunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_stunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.eigenanteil` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.restanspruch_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.beginn_zeitraum` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.bemerkung` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.weitere_leitungskraefte` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.genehmigt_am` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.mitteilung_antragsteller` (owner: intent `antrag-genehmigen`)\n- `fortbildungsantraege.zahlungsbetrag` (owner: tool `zahlungsbetrag-berechnen`)\n- `fortbildungsantraege.abschluss_datum` (owner: tool `vorgang-abschliessen`)\n- `fortbildungsantraege.zahlungseingang_datum` (owner: tool `zahlungseingang-datum-setzen`)\n"
+    },
+    {
+      "slug": "antrag-genehmigen",
+      "label": {
+        "de": "Antrag genehmigen",
+        "en": "Approve request"
+      },
+      "description": "Nach der Abstimmung wird der Antrag genehmigt oder abgelehnt, der Antragsteller samt Restanspruch informiert.",
+      "priority": "must",
+      "writes": [
+        {
+          "entity": "fortbildungsantraege",
+          "op": "update",
+          "when": "always",
+          "fields": {
+            "genehmigt_am": "derived:today",
+            "mitteilung_antragsteller": "user"
+          },
+          "multiple": false,
+          "needs": {},
+          "defaults": []
+        }
+      ],
+      "required": [],
+      "brief": "# Flow `antrag-genehmigen` — Antrag genehmigen\nNach der Abstimmung wird der Antrag genehmigt oder abgelehnt, der Antragsteller samt Restanspruch informiert.\n\n## Your hook — import it, never rebuild what it owns\n`import { useAntragGenehmigenFlow } from '@/lib/journey/flows/AntragGenehmigen';` — generated from the Schreibliste below. It OWNS the form(s), one record search per picked field (columns and filter from the plan) and the submit plan with every fixed and derived value. You compose: `flow.forms.<entity>` for <Bound>/<Field>, `{...flow.picks.<field>.select} {...flow.pick('<field>')}` (or `flow.pickMany` for a multi pick) for <EntitySelectStep>, `flow.validateStep(n)` in StepNav.onNext, `flow.submit` + `flow.formList` for SummaryStep/SuccessStep, `flow.reset()`; what the hook does not own reads through its door `flow.port` — availability `useOccupancy(flow.port, '<entity>', { resource })`, a count `useRecordCount(flow.port, …)` — never import servicePort next to the hook. Options: `steps` (field → step), `items` (how a hit reads, per pick), `initial`, `messages`. The hook's docblock in .lane-context.md shows the exact call. This flow CHANGES a record of `fortbildungsantraege`: `{...flow.picks.fortbildungsantraege.select} {...flow.pick('fortbildungsantraege')}` picks it, the hook prefills the form with its current values and updates THAT record — never a create step, never a list from useDashboardData. Never import servicePort, useStepForm, useJourneySubmit, useRecordSearch or useDashboardData in this page — check-intents refuses a page that uses the hook and any of them.\n\n## Steps (in this order)\n1. Antrag in Abstimmung oder Überarbeitung wählen\n2. Rückmeldungen der Leitungskräfte sichten\n3. Genehmigt, abgelehnt oder zur Überarbeitung wählen\n4. Mitteilung an Antragsteller mit verbleibenden Fortbildungstagen bestätigen\n\n## Schreibliste — the ONLY writes this flow makes (the gate compares your plan steps with this list)\n- updates `fortbildungsantraege`:\n    - `genehmigt_am`: derived: today() — set it in the plan step, never ask\n    - `mitteilung_antragsteller`: the user enters it (bind it through the layer: form.field/…)\n\n## Reads\n- `fortbildungsantraege` columns titel, antragsteller, restanspruch_tage, kostenuebernahme, status\n- `rueckmeldungen_der_leitungskraefte` columns leitungskraft, entscheidung, kommentar, datum\n\n## Success page\n- the review ends with ONE button per way to finish — spread `variants={flow.actions}` onto <SummaryStep>, never write your own confirm buttons: „Genehmigen“ sets status=genehmigt; „Ablehnen“ sets status=abgelehnt; „Zur Überarbeitung zurückgeben“ sets status=ueberarbeitung\n- the success page offers the way back — `undo={flow.undo}` on <SuccessStep>: „Entscheidung zurücknehmen“ sets status=abstimmung\n- shows: `fortbildungsantraege.status`, `fortbildungsantraege.restanspruch_tage`\n\n## Never write these — another flow or a tool owns them\n- `fortbildungsantraege.antragsteller` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.titel` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.veranstalter` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ort` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.zielgruppe` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.beginn` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ende` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_tage` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.arbeitsbefreiung_stunden` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kosten_unterkunft_verpflegung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kursgebuehren` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.fahrtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.gesamtkosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.ausschreibung_link` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.leitungskraft` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.status` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.tatsaechliche_kosten` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.kostenuebernahme` (owner: intent `fortbildung-beantragen`)\n- `fortbildungsantraege.genehmigung_vorschlag` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.kategorie` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungstage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.fortbildungsstunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.dienstbefreiung_stunden` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.eigenanteil` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.restanspruch_tage` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.beginn_zeitraum` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.bemerkung` (owner: intent `stellungnahme-erfassen`)\n- `fortbildungsantraege.weitere_leitungskraefte` (owner: intent `stellungnahme-erfassen`)\n- `rueckmeldungen_der_leitungskraefte.antrag` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.leitungskraft` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.entscheidung` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.kommentar` (owner: intent `rueckmeldung-geben`)\n- `rueckmeldungen_der_leitungskraefte.datum` (owner: intent `rueckmeldung-geben`)\n- `fortbildungsantraege.zahlungsbetrag` (owner: tool `zahlungsbetrag-berechnen`)\n- `fortbildungsantraege.abschluss_datum` (owner: tool `vorgang-abschliessen`)\n- `fortbildungsantraege.zahlungseingang_datum` (owner: tool `zahlungseingang-datum-setzen`)\n"
+    }
+  ],
+  "public_pages": [],
+  "tools": [
+    {
+      "id": "abrechnung-status-setzen",
+      "purpose": "Läuft bei jeder Änderung eines Antrags und prüft im Code das Feld Datum der Abrechnung. Ist es gesetzt und der Status noch Genehmigt oder Abrechnung, wird der Status je nach Zahlungsart auf Zahlung offen gesetzt."
+    },
+    {
+      "id": "zahlungsbetrag-berechnen",
+      "purpose": "Läuft bei jeder Änderung eines Antrags und berechnet im Code aus tatsächlichen Kosten und Kostenübernahme den Zahlungsbetrag, sobald tatsächliche Kosten eingetragen sind."
+    },
+    {
+      "id": "vorgang-abschliessen",
+      "purpose": "Läuft bei jeder Änderung eines Antrags und prüft im Code das Feld Zahlung eingegangen. Ist es gesetzt und der Antrag noch nicht abgeschlossen, wird der Vorgang geschlossen und das Abschlussdatum eingetragen."
+    },
+    {
+      "id": "zahlungseingang-datum-setzen",
+      "purpose": "Läuft bei jeder Änderung eines Antrags und trägt im Code das Datum des Zahlungseingangs ein, wenn Zahlung eingegangen gesetzt, das Datum aber leer ist."
+    },
+    {
+      "id": "antrag-in-ueberarbeitung-bei-rueckfrage",
+      "purpose": "Läuft beim Anlegen einer Rückmeldung und setzt den Antrag auf Überarbeitung, wenn die Rückmeldung eine Rückfrage ist und der Antrag in Abstimmung steht."
+    }
+  ],
+  "covered_by_platform": [
+    {
+      "wish": "Anhänge und Ausschreibung beifügen",
+      "feature": "record_attachments"
+    },
+    {
+      "wish": "Liste mit Titel der Fortbildungen",
+      "feature": "list_page"
+    },
+    {
+      "wish": "Personen überarbeiten, Standort als Dropdown mit Orten befüllbar",
+      "feature": "record_form"
+    },
+    {
+      "wish": "Zugriff für Leitungskräfte und Sachbearbeitung",
+      "feature": "user_roles"
+    }
+  ],
+  "ownership": {
+    "fortbildungsantraege": {
+      "antragsteller": "intent:fortbildung-beantragen",
+      "titel": "intent:fortbildung-beantragen",
+      "veranstalter": "intent:fortbildung-beantragen",
+      "ort": "intent:fortbildung-beantragen",
+      "zielgruppe": "intent:fortbildung-beantragen",
+      "beginn": "intent:fortbildung-beantragen",
+      "ende": "intent:fortbildung-beantragen",
+      "arbeitsbefreiung_tage": "intent:fortbildung-beantragen",
+      "arbeitsbefreiung_stunden": "intent:fortbildung-beantragen",
+      "kosten_unterkunft_verpflegung": "intent:fortbildung-beantragen",
+      "kursgebuehren": "intent:fortbildung-beantragen",
+      "fahrtkosten": "intent:fortbildung-beantragen",
+      "gesamtkosten": "intent:fortbildung-beantragen",
+      "ausschreibung": "intent:fortbildung-beantragen",
+      "ausschreibung_link": "intent:fortbildung-beantragen",
+      "leitungskraft": "intent:fortbildung-beantragen",
+      "status": "tool:antrag-in-ueberarbeitung-bei-rueckfrage",
+      "tatsaechliche_kosten": "intent:fortbildung-beantragen",
+      "kostenuebernahme": "intent:stellungnahme-erfassen",
+      "genehmigung_vorschlag": "intent:stellungnahme-erfassen",
+      "kategorie": "intent:stellungnahme-erfassen",
+      "fortbildungstage": "intent:stellungnahme-erfassen",
+      "fortbildungsstunden": "intent:stellungnahme-erfassen",
+      "dienstbefreiung_tage": "intent:stellungnahme-erfassen",
+      "dienstbefreiung_stunden": "intent:stellungnahme-erfassen",
+      "eigenanteil": "intent:stellungnahme-erfassen",
+      "restanspruch_tage": "intent:stellungnahme-erfassen",
+      "beginn_zeitraum": "intent:stellungnahme-erfassen",
+      "bemerkung": "intent:stellungnahme-erfassen",
+      "weitere_leitungskraefte": "intent:stellungnahme-erfassen",
+      "genehmigt_am": "intent:antrag-genehmigen",
+      "mitteilung_antragsteller": "intent:antrag-genehmigen",
+      "zahlungsbetrag": "tool:zahlungsbetrag-berechnen",
+      "abschluss_datum": "tool:vorgang-abschliessen",
+      "zahlungseingang_datum": "tool:zahlungseingang-datum-setzen"
+    },
+    "rueckmeldungen_der_leitungskraefte": {
+      "antrag": "intent:rueckmeldung-geben",
+      "leitungskraft": "intent:rueckmeldung-geben",
+      "entscheidung": "intent:rueckmeldung-geben",
+      "kommentar": "intent:rueckmeldung-geben",
+      "datum": "intent:rueckmeldung-geben"
+    }
+  },
+  "dashboard": {
+    "focus": [
+      "Verbrauch und Stand der Fortbildungstage nach Jahr",
+      "Gesamtkosten der Fortbildungen",
+      "Liste der Fortbildungstitel mit Status",
+      "Offene Anträge je Status",
+      "Offene Zahlungen"
+    ],
+    "hints": [
+      "Fortbildungstage nach Jahr von Beginn gruppieren, Verbrauch nur genehmigter bis abgeschlossener Anträge",
+      "Gesamtkosten summiert aus Gesamtkosten, nach Abrechnung tatsächliche Kosten",
+      "Anträge in Abstimmung zeigen, wie viele Rückmeldungen schon vorliegen"
+    ],
+    "views": [],
+    "writes": [
+      {
+        "entity": "fortbildungsantraege",
+        "fields": [
+          "zahlungseingang"
+        ],
+        "how": "button",
+        "rule": "Setzt Zahlung eingegangen beim angeklickten Antrag, dessen Status Zahlung offen ist."
+      }
+    ],
+    "wishes": []
+  }
+}
