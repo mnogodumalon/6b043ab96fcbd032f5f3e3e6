@@ -18,6 +18,11 @@ const IntentFields = lazy(() => import('@/pages/IntentFields'));
 const IntentsAdmin = lazy(() => import('@/pages/IntentsAdmin'));
 const AppMap = lazy(() => import('@/pages/AppMap'));
 // <custom:imports>
+const IntentFortbildungBeantragenPage = lazy(() => import('@/pages/intents/FortbildungBeantragenPage'));
+import { DashboardSkeleton } from '@/components/DashboardStates';
+const IntentStellungnahmeErfassenPage = lazy(() => import('@/pages/intents/StellungnahmeErfassenPage'));
+const IntentRueckmeldungGebenPage = lazy(() => import('@/pages/intents/RueckmeldungGebenPage'));
+const IntentAntragGenehmigenPage = lazy(() => import('@/pages/intents/AntragGenehmigenPage'));
 // </custom:imports>
 
 // Lazy: public pages live outside <Layout> and only load on /#/public/:slug —
@@ -95,6 +100,10 @@ export default function App() {
                 <Route path="verwaltung/oeffentliche-seiten" element={<PublicPagesAdmin />} />
                 <Route path="verwaltung/oeffentliche-seiten/:slug/felder" element={<PublicPageFields />} />
                 {/* <custom:routes> */}
+                <Route path="intents/fortbildung-beantragen" element={<Suspense fallback={<DashboardSkeleton />}><IntentFortbildungBeantragenPage /></Suspense>} />
+                <Route path="intents/stellungnahme-erfassen" element={<Suspense fallback={<DashboardSkeleton />}><IntentStellungnahmeErfassenPage /></Suspense>} />
+                <Route path="intents/rueckmeldung-geben" element={<Suspense fallback={<DashboardSkeleton />}><IntentRueckmeldungGebenPage /></Suspense>} />
+                <Route path="intents/antrag-genehmigen" element={<Suspense fallback={<DashboardSkeleton />}><IntentAntragGenehmigenPage /></Suspense>} />
                 {/* </custom:routes> */}
                 {/* An unknown hash (a bookmark from before a rebuild renamed the
                     flows, a mistyped link) must not be a blank page. */}

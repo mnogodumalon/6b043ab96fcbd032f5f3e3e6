@@ -20,6 +20,7 @@
 import type { ComponentType } from 'react';
 
 // <custom:intent-imports>
+import { IconSchool, IconClipboardCheck, IconMessageCircleCheck, IconCircleCheck } from '@tabler/icons-react';
 // </custom:intent-imports>
 
 export interface IntentLink {
@@ -42,6 +43,10 @@ export interface IntentLink {
 
 export const INTENTS: IntentLink[] = [
   // <custom:intents>
+  { path: '/intents/fortbildung-beantragen', label: { de: 'Fortbildung beantragen', en: 'Apply for training' }, icon: IconSchool, description: 'Fortbildungsantrag mit Kosten, Ausschreibung und Leitungskraft stellen' },
+  { path: '/intents/stellungnahme-erfassen', label: { de: 'Stellungnahme erfassen', en: 'Record supervisor opinion' }, icon: IconClipboardCheck, description: 'Stellungnahme der Leitungskraft erfassen und weitere Leitungskräfte wählen' },
+  { path: '/intents/rueckmeldung-geben', label: { de: 'Rückmeldung geben', en: 'Give feedback' }, icon: IconMessageCircleCheck, description: 'Zustimmung, Rückfrage oder Kommentar zu einem Antrag abgeben' },
+  { path: '/intents/antrag-genehmigen', label: { de: 'Antrag genehmigen', en: 'Approve request' }, icon: IconCircleCheck, description: 'Antrag genehmigen, ablehnen oder zur Überarbeitung zurückgeben und Antragsteller informieren' },
   // </custom:intents>
 ];
 
@@ -52,7 +57,7 @@ export const INTENTS: IntentLink[] = [
  * purpose — a scaffold update resets it to false (self-healing if Phase 2
  * never ran).
  */
-export const INTENTS_PENDING = true;
+export const INTENTS_PENDING = false;
 
 /**
  * When the Phase-1 bundle was deployed (ISO, set by the service together with
